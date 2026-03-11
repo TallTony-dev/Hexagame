@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
 using System.Numerics;
-using System.Runtime.Intrinsics.Arm;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Hexagame
 {
@@ -18,22 +12,68 @@ namespace Hexagame
             {
                 SolidSides[i] = rand.Next(0, 2) == 0 ? false : true;
             }
+            rotVel = (rand.NextSingle() - 0.5f) * 3f;
         }
 
-        public float radius = 1.5f;
+        public float radius = 3f;
+        float rotVel = 0;
         float rotation = 0;
         float width = 0.2f;
         bool[] SolidSides = new bool[6];
 
-        public bool CollidesWith(float rotation, float radius)
+        public bool CollidesWith(float objRotation, float objRadius, float objWidth, float objLength)
         {
-            return true;
+            //llm: check player collison stuff
+            float outerRadius = radius + width;
+
+            // Player radial span is [objRadius, objRadius + objLength] (matches draw code)
+            float playerInner = objRadius;
+            float playerOuter = objRadius + objLength;
+
+            // No radial overlap means no collision
+            if (playerOuter < radius || playerInner > outerRadius)
+                return false;
+
+            // The player is positioned along +Y before rotation, so its actual
+            // world angle is objRotation + PI/2 (barrier angles are from +X axis)
+            float playerAngle = objRotation + MathF.PI / 2f;
+
+            // Half angular width of the player at its radial distance
+            float halfAngularWidth = MathF.Atan2(objWidth / 2f, objRadius);
+
+            for (int i = 0; i < SolidSides.Length; i++)
+            {
+                if (!SolidSides[i])
+                    continue;
+
+                float sideStart = rotation + i * (MathF.PI / 3);
+                float sideMid = sideStart + MathF.PI / 6f;
+                float sideHalf = MathF.PI / 6f;
+
+                // Shortest angular distance between player center and side center
+                float diff = AngleDiff(playerAngle, sideMid);
+
+                // Overlap if the distance between centers is less than sum of half-widths
+                if (diff < sideHalf + halfAngularWidth)
+                    return true;
+            }
+
+            return false;
+        }
+
+        // Returns the shortest unsigned angular distance in [0, PI]
+        private static float AngleDiff(float a, float b)
+        {
+            float diff = (a - b) % (MathF.PI * 2);
+            if (diff < 0) diff += MathF.PI * 2;
+            if (diff > MathF.PI) diff = MathF.PI * 2 - diff;
+            return diff;
         }
 
         public void Update(double deltaTime)
         {
             radius -= 0.5f * (float)deltaTime;
-            rotation += 2f * (float)deltaTime;
+            rotation += rotVel * (float)deltaTime;
         }
 
 

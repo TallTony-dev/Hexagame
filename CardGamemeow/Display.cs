@@ -157,7 +157,7 @@ namespace Hexagame
             return '█';
         }
 
-        public void DrawToConsole()
+        public void DrawGameToConsole()
         {
             StringBuilder buf = new StringBuilder();
             (char c, ConsoleColor col)[,] display = new (char, ConsoleColor)[values.GetLength(0), values.GetLength(1)];
@@ -244,6 +244,45 @@ namespace Hexagame
                 buf.Append('─');
             }
             buf.AppendLine();
+
+            Console.Clear();
+            Console.Write(buf.ToString());
+        }
+
+        public void DrawMenu()
+        {
+            StringBuilder buf = new StringBuilder();
+            int width = values.GetLength(0);
+            int height = values.GetLength(1);
+            buf.Append(GetAnsiForegroundColor(ConsoleColor.Cyan));
+            buf.Append("Welcome to super hexagon, press enter to start");
+            buf.Append(RESET);
+
+            Console.Clear();
+            Console.Write(buf.ToString());
+        }
+
+        public void DrawWinMenu()
+        {
+            StringBuilder buf = new StringBuilder();
+            int width = values.GetLength(0);
+            int height = values.GetLength(1);
+            buf.Append(GetAnsiForegroundColor(ConsoleColor.Green));
+            buf.Append("YAY YOU WON WOOHOO");
+            buf.Append(RESET);
+
+            Console.Clear();
+            Console.Write(buf.ToString());
+        }
+
+        public void DrawLossMenu()
+        {
+            StringBuilder buf = new StringBuilder();
+            int width = values.GetLength(0);
+            int height = values.GetLength(1);
+            buf.Append(GetAnsiForegroundColor(ConsoleColor.Red));
+            buf.Append("oh u lost rip");
+            buf.Append(RESET);
 
             Console.Clear();
             Console.Write(buf.ToString());

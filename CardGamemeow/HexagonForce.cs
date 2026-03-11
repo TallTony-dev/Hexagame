@@ -20,35 +20,65 @@ namespace CardGamemeow
         List<HexBarrier> activeBarriers = new List<HexBarrier>();
         
         double timeCount = 3;
+
+        GameState state = GameState.Menu;
         public void UpdateGame(double deltaTime)
         {
-            display.Update(deltaTime);
-            timeCount += deltaTime;
-            if (timeCount >= 3)
+            if (state == GameState.inGame)
             {
-                timeCount = 0;
-                activeBarriers.Add(new HexBarrier());
-            }
-
-            bool isLost = false;
-            foreach (var barrier in activeBarriers)
-            {
-                barrier.Update(deltaTime);
-                if (barrier.CollidesWith(playerRot, playerRadius))
+                display.Update(deltaTime);
+                timeCount += deltaTime;
+                if (timeCount >= 2)
                 {
-                    isLost = true;
+                    timeCount = 0;
+                    activeBarriers.Add(new HexBarrier());
+                }
+
+
+                foreach (var barrier in activeBarriers)
+                {
+                    barrier.Update(deltaTime);
+                    if (barrier.CollidesWith(playerRot, playerRadius, playerSize, playerSize))
+                    {
+                        state = GameState.Loss;
+                        activeBarriers.Clear();
+                        break;
+                    }
+                }
+
+                if (InputManager.IsKeyDown(ConsoleKey.LeftArrow))
+                {
+                    playerRot += 0.4f;
+                }
+                if (InputManager.IsKeyDown(ConsoleKey.RightArrow))
+                {
+                    playerRot -= 0.4f;
                 }
             }
-
-            if (InputManager.IsKeyDown(ConsoleKey.LeftArrow))
+            else if (state == GameState.Menu)
             {
-                playerRot += 0.4f;
+                display.DrawMenu();
+                if (InputManager.IsKeyPressed(ConsoleKey.Enter))
+                {
+                    state = GameState.inGame;
+                }
             }
-            if (InputManager.IsKeyDown(ConsoleKey.RightArrow))
+            else if (state == GameState.Loss)
             {
-                playerRot -= 0.4f;
+                display.DrawLossMenu();
+                if (InputManager.IsKeyPressed(ConsoleKey.Enter))
+                {
+                    state = GameState.Menu;
+                }
             }
-
+            else if (state == GameState.Victory)
+            {
+                display.DrawWinMenu();
+                if (InputManager.IsKeyPressed(ConsoleKey.Enter))
+                {
+                    state = GameState.Menu;
+                }
+            }
         }
 
 
@@ -56,31 +86,35 @@ namespace CardGamemeow
         Display display = new Display(50,50);
         public void DrawGame()
         {
-            
 
-            for (int i = activeBarriers.Count - 1; i >= 0; i--)
+            if (state == GameState.inGame)
             {
-                var barrier = activeBarriers[i];
-                barrier.Draw(display);
-                if (barrier.radius <= 0)
+                for (int i = activeBarriers.Count - 1; i >= 0; i--)
                 {
-                    activeBarriers.Remove(barrier);
+                    var barrier = activeBarriers[i];
+                    barrier.Draw(display);
+                    if (barrier.radius <= 0)
+                    {
+                        activeBarriers.Remove(barrier);
+                    }
                 }
+                //draw player here
+                Matrix4x4 rot = Matrix4x4.CreateRotationZ(playerRot);
+
+                Vector4 a = Vector4.Transform(new Vector4(-playerSize / 2, playerRadius, 0.9f, 1), rot); //bottom left
+                Vector4 b = Vector4.Transform(new Vector4(playerSize / 2, playerRadius, 0.9f, 1), rot); // bottom right
+                Vector4 c = Vector4.Transform(new Vector4(-playerSize / 2, playerRadius + playerSize, 0.9f, 1), rot); //top left
+                Vector4 d = Vector4.Transform(new Vector4(playerSize / 2, playerRadius + playerSize, 0.9f, 1), rot); //top right
+
+                display.DrawSquare(c, d, a, b, ConsoleColor.Blue);
+
+
+                display.DrawGameToConsole();
+                display.Clear();
             }
-            //draw player here
-            Matrix4x4 rot = Matrix4x4.CreateRotationZ(playerRot);
-
-            Vector4 a = Vector4.Transform(new Vector4(-playerSize / 2, playerRadius, 0.9f, 1), rot); //bottom left
-            Vector4 b = Vector4.Transform(new Vector4(playerSize / 2, playerRadius, 0.9f, 1), rot); // bottom right
-            Vector4 c = Vector4.Transform(new Vector4(-playerSize / 2, playerRadius + playerSize, 0.9f, 1), rot); //top left
-            Vector4 d = Vector4.Transform(new Vector4(playerSize / 2, playerRadius + playerSize, 0.9f, 1), rot); //top right
-
-            display.DrawSquare(c, d, a, b, ConsoleColor.Blue);
-
-
-            display.DrawToConsole();
-            display.Clear();
         }
 
+
+        enum GameState { Menu, inGame, Loss, Victory }
     }
 }
