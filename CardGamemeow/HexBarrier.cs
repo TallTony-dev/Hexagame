@@ -14,7 +14,7 @@ namespace Hexagame
 
         float radius = 0.2f;
         float rotation = 0;
-        float width = 0.2f;
+        float width = 0.5f;
         bool[] SolidSides = new bool[6];
 
         public bool CollidesWith(float rotation, float radius)
@@ -24,7 +24,8 @@ namespace Hexagame
 
         public void Update(double deltaTime)
         {
-            radius += 0.01f;
+            radius += 0.03f;
+            rotation += 0.2f;
         }
 
 
@@ -40,13 +41,13 @@ namespace Hexagame
                 //should be clockwise i think
                 Vector4 a = Vector4.Transform(new Vector4(-radius / 2, radius, 0, 1), rot); //bottom left
                 Vector4 b = Vector4.Transform(new Vector4(radius / 2, radius, 1, 1), rot); // bottom right
-                Vector4 c = Vector4.Transform(new Vector4((-radius - width) / 2, radius + width / 2, 1, 1), rot); //top left
-                Vector4 d = Vector4.Transform(new Vector4((radius + width) / 2, radius + width / 2, 1, 1), rot); //top right
+                Vector4 c = Vector4.Transform(new Vector4((-radius - width) / 2, radius + width, 1, 1), rot); //top left
+                Vector4 d = Vector4.Transform(new Vector4((radius + width) / 2, radius + width, 1, 1), rot); //top right
 
 
-                vertices[vi] = (a, ConsoleColor.Magenta);
-                vertices[vi + 1] = (c, ConsoleColor.Magenta);
-                vertices[vi + 2] = (d, ConsoleColor.Magenta);
+                vertices[vi] = (a, ConsoleColor.Blue);
+                vertices[vi + 1] = (c, ConsoleColor.Blue);
+                vertices[vi + 2] = (d, ConsoleColor.Blue);
                 vertices[vi + 3] = (b, ConsoleColor.Magenta);
                 vertices[vi + 4] = (c, ConsoleColor.Magenta);
                 vertices[vi + 5] = (d, ConsoleColor.Magenta);

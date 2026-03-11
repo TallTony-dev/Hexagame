@@ -10,8 +10,6 @@ namespace CardGamemeow
         {
             double prevTime = (double)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() / 1000;
 
-            double count = 0;
-
             HexagonForce hexagonForce = new HexagonForce();
 
             Console.CursorVisible = false;
@@ -20,12 +18,10 @@ namespace CardGamemeow
             while (true)
             {
                 double deltaTime = ((double)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() / 1000) - prevTime;
-                prevTime += deltaTime;
 
-                count += deltaTime;
-                if (count >= 0.15)
+                if (deltaTime >= 0.15)
                 {
-                    count = 0;
+                    prevTime += deltaTime;
 
                     InputManager.UpdateKey();
                     hexagonForce.UpdateGame(deltaTime);

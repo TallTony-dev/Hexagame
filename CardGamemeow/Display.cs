@@ -55,11 +55,35 @@ namespace Hexagame
             InitializeDepthBuffer();
         }
 
+        float elapsedTime = 0f;
+
+        public void Update(double deltaTime)
+        {
+            elapsedTime += (float)deltaTime;
+            viewMatrix.Translation = new Vector3((float)Math.Sin(elapsedTime) * 1f, 0, 0);
+        }
+
+
         //returns double signed area of triangle
         private float EdgeFunction(Vector4 a, Vector4 b, Vector4 c)
         {
             return (b.X - a.X) * (c.Y - a.Y) - (b.Y - a.Y) * (c.X - a.X);
         }
+
+
+        public void DrawSquare(Vector4 topLeft, Vector4 topRight, Vector4 bottomLeft, Vector4 bottomRight)
+        {
+            (Vector4, ConsoleColor)[] vertices = new (Vector4, ConsoleColor)[36];
+            vertices[0] = (bottomLeft, ConsoleColor.Blue);
+            vertices[1] = (topLeft, ConsoleColor.Blue);
+            vertices[2] = (topRight, ConsoleColor.Blue);
+            vertices[3] = (bottomRight, ConsoleColor.Magenta);
+            vertices[4] = (topLeft, ConsoleColor.Magenta);
+            vertices[5] = (topRight, ConsoleColor.Magenta);
+            DrawTriangle(vertices[0..3]);
+            DrawTriangle(vertices[3..6]);
+        }
+
 
         public void DrawTriangle((Vector4 vec, ConsoleColor col)[] vertices)
         {
@@ -92,15 +116,15 @@ namespace Hexagame
                             float ABP = EdgeFunction(a, b, p);
                             float BCP = EdgeFunction(b, c, p);
                             float CAP = EdgeFunction(c, a, p);
-                            //if (ABP >= 0 && BCP >= 0 && CAP >= 0)
-                            //{
+                            if (ABP <= 0 && BCP <= 0 && CAP <= 0)
+                            {
                                 float dist = a.Z * a.W + b.Z * b.W + c.Z * c.W;
                                 if (dist < values[x, y].distFromCam)
                                 {
                                     values[x, y].distFromCam = dist;
                                     values[x, y].color = vertices[0].col;
                                 }
-                            //}
+                            }
                         }
                     }
                 }
