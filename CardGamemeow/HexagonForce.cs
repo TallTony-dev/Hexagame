@@ -1,4 +1,5 @@
-﻿using Hexagame;
+﻿using FunGameWahoo;
+using Hexagame;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,8 @@ namespace CardGamemeow
         public HexagonForce() { }
 
         float playerRot = 0;
-        float playerRadius = 2;
+        float playerRadius = 0.4f;
+        float playerSize = 0.15f;
 
         List<HexBarrier> activeBarriers = new List<HexBarrier>();
         
@@ -38,28 +40,42 @@ namespace CardGamemeow
                 }
             }
 
+            if (InputManager.IsKeyDown(ConsoleKey.LeftArrow))
+            {
+                playerRot += 0.4f;
+            }
+            if (InputManager.IsKeyDown(ConsoleKey.RightArrow))
+            {
+                playerRot -= 0.4f;
+            }
+
         }
 
 
         
-        Display display = new Display(40,40);
+        Display display = new Display(50,50);
         public void DrawGame()
         {
             
 
-            foreach (var barrier in activeBarriers)
+            for (int i = activeBarriers.Count - 1; i >= 0; i--)
             {
+                var barrier = activeBarriers[i];
                 barrier.Draw(display);
+                if (barrier.radius <= 0)
+                {
+                    activeBarriers.Remove(barrier);
+                }
             }
             //draw player here
             Matrix4x4 rot = Matrix4x4.CreateRotationZ(playerRot);
 
-            Vector4 a = Vector4.Transform(new Vector4(-playerRadius / 2, playerRadius, 0, 1), rot); //bottom left
-            Vector4 b = Vector4.Transform(new Vector4(playerRadius / 2, playerRadius, 1, 1), rot); // bottom right
-            Vector4 c = Vector4.Transform(new Vector4((-playerRadius) / 2, playerRadius, 1, 1), rot); //top left
-            Vector4 d = Vector4.Transform(new Vector4((playerRadius) / 2, playerRadius, 1, 1), rot); //top right
+            Vector4 a = Vector4.Transform(new Vector4(-playerSize / 2, playerRadius, 0.9f, 1), rot); //bottom left
+            Vector4 b = Vector4.Transform(new Vector4(playerSize / 2, playerRadius, 0.9f, 1), rot); // bottom right
+            Vector4 c = Vector4.Transform(new Vector4(-playerSize / 2, playerRadius + playerSize, 0.9f, 1), rot); //top left
+            Vector4 d = Vector4.Transform(new Vector4(playerSize / 2, playerRadius + playerSize, 0.9f, 1), rot); //top right
 
-            display.DrawSquare(c, d, a, b);
+            display.DrawSquare(c, d, a, b, ConsoleColor.Blue);
 
 
             display.DrawToConsole();

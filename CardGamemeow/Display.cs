@@ -60,7 +60,10 @@ namespace Hexagame
         public void Update(double deltaTime)
         {
             elapsedTime += (float)deltaTime;
-            viewMatrix.Translation = new Vector3((float)Math.Sin(elapsedTime) * 1f, 0, 0);
+            //viewMatrix.Translation = new Vector3((float)Math.Sin(elapsedTime) * 0.4f, 0, 0);
+            //Matrix4x4 mat = Matrix4x4.CreateFromYawPitchRoll(0, (float)Math.Sin(elapsedTime) * 0.04f, 0);
+            viewMatrix = Matrix4x4.CreateScale(new Vector3(1, (float)Math.Sin(elapsedTime + 2) * 0.8f + 1f, 1));
+            //viewMatrix = Matrix4x4.Multiply(viewMatrix, mat);
         }
 
 
@@ -71,15 +74,15 @@ namespace Hexagame
         }
 
 
-        public void DrawSquare(Vector4 topLeft, Vector4 topRight, Vector4 bottomLeft, Vector4 bottomRight)
+        public void DrawSquare(Vector4 topLeft, Vector4 topRight, Vector4 bottomLeft, Vector4 bottomRight, ConsoleColor color)
         {
             (Vector4, ConsoleColor)[] vertices = new (Vector4, ConsoleColor)[36];
-            vertices[0] = (bottomLeft, ConsoleColor.Blue);
-            vertices[1] = (topLeft, ConsoleColor.Blue);
-            vertices[2] = (topRight, ConsoleColor.Blue);
-            vertices[3] = (bottomRight, ConsoleColor.Magenta);
-            vertices[4] = (topLeft, ConsoleColor.Magenta);
-            vertices[5] = (topRight, ConsoleColor.Magenta);
+            vertices[0] = (bottomLeft, color);
+            vertices[1] = (topLeft, color);
+            vertices[2] = (topRight, color);
+            vertices[3] = (bottomLeft, color);
+            vertices[4] = (topRight, color);
+            vertices[5] = (bottomRight, color);  
             DrawTriangle(vertices[0..3]);
             DrawTriangle(vertices[3..6]);
         }
@@ -225,9 +228,9 @@ namespace Hexagame
                         continue;
                     }
 
-                    //buf.Append(GetAnsiForegroundColor(display[x, y].col));
+                    buf.Append(GetAnsiForegroundColor(display[x, y].col));
                     buf.Append(display[x, y].c);
-                    //buf.Append(RESET);
+                    buf.Append(RESET);
 
                     buf.Append(" ");
                 }

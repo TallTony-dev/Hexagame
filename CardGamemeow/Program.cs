@@ -13,13 +13,13 @@ namespace CardGamemeow
             HexagonForce hexagonForce = new HexagonForce();
 
             Console.CursorVisible = false;
-            Console.ForegroundColor = ConsoleColor.Green;
+            //Console.ForegroundColor = ConsoleColor.Green;
 
             while (true)
             {
                 double deltaTime = ((double)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() / 1000) - prevTime;
 
-                if (deltaTime >= 0.15)
+                if (deltaTime >= 0.09)
                 {
                     prevTime += deltaTime;
 
