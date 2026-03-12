@@ -8,17 +8,22 @@ namespace Hexagame
         public HexBarrier()
         {
             Random rand = new Random();
+            int trueCount = 0;
             for (int i = 0; i < SolidSides.Length; i++)
             {
-                SolidSides[i] = rand.Next(0, 2) == 0 ? false : true;
+                if (rand.Next(0, 2) == 0 && trueCount + 1 < SolidSides.Length)
+                {
+                    trueCount++;
+                    SolidSides[i] = true;
+                }
             }
             rotVel = (rand.NextSingle() - 0.5f) * 3f;
         }
 
-        public float radius = 3f;
+        public float radius = 5f;
         float rotVel = 0;
         float rotation = 0;
-        float width = 0.2f;
+        float width = 0.15f;
         bool[] SolidSides = new bool[6];
 
         public bool CollidesWith(float objRotation, float objRadius, float objWidth, float objLength)

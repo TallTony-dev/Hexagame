@@ -14,12 +14,13 @@ namespace CardGamemeow
         public HexagonForce() { }
 
         float playerRot = 0;
-        float playerRadius = 0.4f;
-        float playerSize = 0.15f;
+        float playerRadius = 0.5f;
+        float playerSize = 0.1f;
 
         List<HexBarrier> activeBarriers = new List<HexBarrier>();
         
         double timeCount = 3;
+        int score = 0;
 
         GameState state = GameState.Menu;
         public void UpdateGame(double deltaTime)
@@ -65,10 +66,11 @@ namespace CardGamemeow
             }
             else if (state == GameState.Loss)
             {
-                display.DrawLossMenu();
+                display.DrawLossMenu(score);
                 if (InputManager.IsKeyPressed(ConsoleKey.Enter))
                 {
                     state = GameState.Menu;
+                    score = 0;
                 }
             }
             else if (state == GameState.Victory)
@@ -96,6 +98,7 @@ namespace CardGamemeow
                     if (barrier.radius <= 0)
                     {
                         activeBarriers.Remove(barrier);
+                        score++;
                     }
                 }
                 //draw player here
@@ -109,7 +112,7 @@ namespace CardGamemeow
                 display.DrawSquare(c, d, a, b, ConsoleColor.Blue);
 
 
-                display.DrawGameToConsole();
+                display.DrawGameToConsole(score);
                 display.Clear();
             }
         }

@@ -61,9 +61,9 @@ namespace Hexagame
         {
             elapsedTime += (float)deltaTime;
             //viewMatrix.Translation = new Vector3((float)Math.Sin(elapsedTime) * 0.4f, 0, 0);
-            //Matrix4x4 mat = Matrix4x4.CreateFromYawPitchRoll(0, (float)Math.Sin(elapsedTime) * 0.04f, 0);
-            viewMatrix = Matrix4x4.CreateScale(new Vector3(1, (float)Math.Sin(elapsedTime + 2) * 0.8f + 1f, 1));
-            //viewMatrix = Matrix4x4.Multiply(viewMatrix, mat);
+            viewMatrix = Matrix4x4.CreateScale(new Vector3(0.5f, 0.5f, 1f));
+            Matrix4x4 mat = Matrix4x4.CreateFromYawPitchRoll(0, (float)Math.Sin(elapsedTime) * 0.3f, (float)Math.Sin(elapsedTime * 1.2f + 1) * 0.3f);
+            viewMatrix = Matrix4x4.Multiply(viewMatrix, mat);
         }
 
 
@@ -119,12 +119,19 @@ namespace Hexagame
                             float ABP = EdgeFunction(a, b, p);
                             float BCP = EdgeFunction(b, c, p);
                             float CAP = EdgeFunction(c, a, p);
-                            if (ABP <= 0 && BCP <= 0 && CAP <= 0)
+                            if (ABP <= 1f && BCP <= 1f && CAP <= 1f)
                             {
                                 float dist = a.Z * a.W + b.Z * b.W + c.Z * c.W;
                                 if (dist < values[x, y].distFromCam)
                                 {
                                     values[x, y].distFromCam = dist;
+                                    float nearest = Math.Max(Math.Max(ABP, BCP), CAP);
+                                    float distOfNearest = float.NaN;
+                                    if (nearest == ABP) { distOfNearest = Vector4.Distance(a, b); }
+                                    else if (nearest == BCP) { distOfNearest = Vector4.Distance(b, c); }
+                                    else if (nearest == CAP) { distOfNearest = Vector4.Distance(c, a); }
+
+                                    values[x, y].strength = MathF.Pow((nearest * 2) / distOfNearest, 8) * 8;
                                     values[x, y].color = vertices[0].col;
                                 }
                             }
@@ -157,7 +164,7 @@ namespace Hexagame
             return '█';
         }
 
-        public void DrawGameToConsole()
+        public void DrawGameToConsole(int score)
         {
             StringBuilder buf = new StringBuilder();
             (char c, ConsoleColor col)[,] display = new (char, ConsoleColor)[values.GetLength(0), values.GetLength(1)];
@@ -181,12 +188,12 @@ namespace Hexagame
                     if (maxDist == 0 || value.distFromCam == float.MaxValue)
                         display[x, y].c = MapToChar(0);
                     else
-                        display[x, y].c = MapToChar(value.distFromCam / maxDist);
+                        display[x, y].c = MapToChar(((value.distFromCam / maxDist) + value.strength) / 2);
                     display[x, y].col = value.color;
 
                 }
             }
-            
+
 
 
             //draw header
@@ -198,7 +205,8 @@ namespace Hexagame
             }
             buf.AppendLine();
 
-            buf.AppendLine("│ is that the one hexagon game I dont remmeber the │");
+            buf.AppendLine("│ WOAH its super hexagon lowkey, use ur arrow keys to move and dodge the things │");
+            buf.AppendLine($"│ SCORE: {score}             KEEP GOING U GOT THIS TWINNNNNN │");
 
             for (int x = 0; x < display.GetLength(0) * 2 + 2; x++)
             {
@@ -275,13 +283,16 @@ namespace Hexagame
             Console.Write(buf.ToString());
         }
 
-        public void DrawLossMenu()
+        public void DrawLossMenu(int score)
         {
             StringBuilder buf = new StringBuilder();
             int width = values.GetLength(0);
             int height = values.GetLength(1);
             buf.Append(GetAnsiForegroundColor(ConsoleColor.Red));
-            buf.Append("oh u lost rip");
+            buf.AppendLine("DAMNNNNNN U LOST TWIN");
+            buf.Append(RESET);
+            buf.Append(GetAnsiForegroundColor(ConsoleColor.Green));
+            buf.AppendLine($"Its ok twin atleast u got {score} points :3");
             buf.Append(RESET);
 
             Console.Clear();
