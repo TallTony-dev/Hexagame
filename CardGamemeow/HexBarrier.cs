@@ -123,10 +123,10 @@ namespace Hexagame
 
             for (int i = 0; i < vertices.Length; i += 3)
             {
+                if (vertices[i].vec == Vector4.Zero && vertices[i + 1].vec == Vector4.Zero && vertices[i + 2].vec == Vector4.Zero)
+                    continue;
                 display.DrawTriangle(vertices[i..(i + 3)]);
             }
-
-
         }
     }
 }

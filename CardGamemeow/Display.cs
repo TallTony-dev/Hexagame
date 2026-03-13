@@ -61,7 +61,7 @@ namespace Hexagame
         {
             elapsedTime += (float)deltaTime;
             //viewMatrix.Translation = new Vector3((float)Math.Sin(elapsedTime) * 0.4f, 0, 0);
-            viewMatrix = Matrix4x4.CreateScale(new Vector3(0.5f, 0.5f, 1f));
+            viewMatrix = Matrix4x4.CreateScale(new Vector3(0.5f, 0.7f, 1f - MathF.Sin(elapsedTime) * 0.4f));
             Matrix4x4 mat = Matrix4x4.CreateFromYawPitchRoll(0, (float)Math.Sin(elapsedTime) * 0.3f, (float)Math.Sin(elapsedTime * 1.2f + 1) * 0.3f);
             viewMatrix = Matrix4x4.Multiply(viewMatrix, mat);
         }
@@ -144,6 +144,16 @@ namespace Hexagame
         public void Clear()
         {
             values = new (float strength, ConsoleColor color, float distFromCam)[values.GetLength(0), values.GetLength(1)];
+            for (int x = 0; x < values.GetLength(0); x++)
+            {
+                for (int y = 0; y < values.GetLength(1); y++)
+                {
+                    int ux = (int)(MathF.Sin((float)x / 4f) * MathF.Sin(elapsedTime / 2 + 2) * 4 + (elapsedTime * 4));
+                    int uy = y + (int)(elapsedTime * 4) /*+ (int)Math.Round(MathF.Sin(elapsedTime * 4))*/;
+                    values[x,y].color = ( (ux + uy) % 2) == 0 ? ConsoleColor.DarkBlue : ConsoleColor.DarkCyan;
+                }
+            }
+
             InitializeDepthBuffer();
         }
 
@@ -157,7 +167,7 @@ namespace Hexagame
         private char MapToChar(float fullness)
         {
             //takes in normalized 0-1 and maps to a char
-            if (fullness == 0) return 'z';
+            if (fullness == 0) return '█';
             if (fullness < 0.2) return '░';
             if (fullness < 0.4) return '▒';
             if (fullness < 0.7) return '▓';
@@ -197,31 +207,31 @@ namespace Hexagame
 
 
             //draw header
-            for (int x = 0; x < display.GetLength(0) * 2 + 2; x++)
+            for (int x = 0; x < display.GetLength(0) + 2; x++)
             {
                 if (x == 0) { buf.Append('┌'); continue; }
-                if (x == display.GetLength(0) * 2 + 1) { buf.Append('┐'); continue; }
+                if (x == display.GetLength(0) + 1) { buf.Append('┐'); continue; }
                 buf.Append('─');
             }
             buf.AppendLine();
 
             buf.AppendLine("│ WOAH its super hexagon lowkey, use ur arrow keys to move and dodge the things │");
-            buf.AppendLine($"│ SCORE: {score}             KEEP GOING U GOT THIS TWINNNNNN │");
+            buf.AppendLine($"│ SCORE: {score}             KEEP GOING U GOT THIS TWINNNNNN    │");
 
-            for (int x = 0; x < display.GetLength(0) * 2 + 2; x++)
+            for (int x = 0; x < display.GetLength(0) + 2; x++)
             {
                 if (x == 0) { buf.Append('└'); continue; }
-                if (x == display.GetLength(0) * 2 + 1) { buf.Append('┘'); continue; }
+                if (x == display.GetLength(0) + 1) { buf.Append('┘'); continue; }
                 buf.Append('─');
             } buf.AppendLine();
 
 
 
 
-            for (int x = 0; x < display.GetLength(0) * 2 + 2; x++)
+            for (int x = 0; x < display.GetLength(0) + 2; x++)
             {
                 if (x == 0) { buf.Append('┌'); continue; }
-                if (x == display.GetLength(0) * 2 + 1) { buf.Append('┐'); continue; }
+                if (x == display.GetLength(0) + 1) { buf.Append('┐'); continue; }
                 buf.Append('─');
             }
             buf.AppendLine();
@@ -239,21 +249,19 @@ namespace Hexagame
                     buf.Append(GetAnsiForegroundColor(display[x, y].col));
                     buf.Append(display[x, y].c);
                     buf.Append(RESET);
-
-                    buf.Append(" ");
                 }
                 buf.Append('│');
                 buf.AppendLine();
             }
-            for (int x = 0; x < display.GetLength(0) * 2 + 2; x++)
+            for (int x = 0; x < display.GetLength(0) + 2; x++)
             {
                 if (x == 0) { buf.Append('└'); continue; }
-                if (x == display.GetLength(0) * 2 + 1) { buf.Append('┘'); continue; }
+                if (x == display.GetLength(0) + 1) { buf.Append('┘'); continue; }
                 buf.Append('─');
             }
             buf.AppendLine();
 
-            Console.Clear();
+            Console.SetCursorPosition(0, 0);
             Console.Write(buf.ToString());
         }
 

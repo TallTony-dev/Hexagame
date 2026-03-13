@@ -11,7 +11,7 @@ namespace CardGamemeow
 {
     internal class HexagonForce
     {
-        public HexagonForce() { }
+        public HexagonForce() { display = new Display(50, 50); }
 
         float playerRot = 0;
         float playerRadius = 0.5f;
@@ -61,6 +61,7 @@ namespace CardGamemeow
                 display.DrawMenu();
                 if (InputManager.IsKeyPressed(ConsoleKey.Enter))
                 {
+                    display = new Display(Console.WindowWidth - 10, Console.WindowHeight - 7);
                     state = GameState.inGame;
                 }
             }
@@ -85,7 +86,7 @@ namespace CardGamemeow
 
 
         
-        Display display = new Display(50,50);
+        Display display;
         public void DrawGame()
         {
 
@@ -109,7 +110,7 @@ namespace CardGamemeow
                 Vector4 c = Vector4.Transform(new Vector4(-playerSize / 2, playerRadius + playerSize, 0.9f, 1), rot); //top left
                 Vector4 d = Vector4.Transform(new Vector4(playerSize / 2, playerRadius + playerSize, 0.9f, 1), rot); //top right
 
-                display.DrawSquare(c, d, a, b, ConsoleColor.Blue);
+                display.DrawSquare(c, d, a, b, ConsoleColor.Yellow);
 
 
                 display.DrawGameToConsole(score);
