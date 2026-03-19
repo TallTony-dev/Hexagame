@@ -170,10 +170,10 @@ namespace Hexagame
             {
                 for (int y = 0; y < values.GetLength(1); y++)
                 {
-                    int ux = x + (int)(MathF.Sin((float)x / 4f) * MathF.Sin(elapsedTime / 2 + 2) * 4 + (elapsedTime * 4)) + (int)(elapsedTime * 12);
-                    int uy = y + (int)(elapsedTime * 4) /*+ (int)Math.Round(MathF.Sin(elapsedTime * 4))*/;
+                    int ux = x + (int)(MathF.Sin(elapsedTime) * 10);
+                    int uy = y + (int)(elapsedTime * 4 + 5 * MathF.Sin((float)ux / 6f + elapsedTime * 0.5f));
 
-                    bool cond = ((ux) % 2) + (uy % 2) == 0;
+                    bool cond = (uy % (5 + (int)(3 * MathF.Sin(elapsedTime * 0.6f + 2)))) == 0 && MathF.Sin(x * 0.2f + y * 0.3f + 40 * MathF.Sin(0.3f * elapsedTime + 1)) > MathF.Sin(elapsedTime * 0.72f);
                     values[x,y].color = cond ? palette[0] : palette[1];
                 }
             }
