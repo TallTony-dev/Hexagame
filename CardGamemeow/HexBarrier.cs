@@ -105,12 +105,12 @@ namespace Hexagame
                     Vector4 d = new Vector4(MathF.Cos(angle2) * outerR, MathF.Sin(angle2) * outerR, 1, 1);
 
 
-                    vertices[vi] = (a, ConsoleColor.Magenta);
-                    vertices[vi + 1] = (d, ConsoleColor.Magenta);
-                    vertices[vi + 2] = (c, ConsoleColor.Magenta);
-                    vertices[vi + 3] = (a, ConsoleColor.Magenta);
-                    vertices[vi + 4] = (b, ConsoleColor.Magenta);
-                    vertices[vi + 5] = (d, ConsoleColor.Magenta);
+                    vertices[vi] = (a, ConsoleColor.Red);
+                    vertices[vi + 1] = (d, ConsoleColor.Red);
+                    vertices[vi + 2] = (c, ConsoleColor.Red);
+                    vertices[vi + 3] = (a, ConsoleColor.Red);
+                    vertices[vi + 4] = (b, ConsoleColor.Red);
+                    vertices[vi + 5] = (d, ConsoleColor.Red);
                     currentRot += 3.14159263f / 3;
                 }
             }

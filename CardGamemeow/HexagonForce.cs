@@ -110,7 +110,7 @@ namespace CardGamemeow
                 Vector4 c = Vector4.Transform(new Vector4(-playerSize / 2, playerRadius + playerSize, 0.9f, 1), rot); //top left
                 Vector4 d = Vector4.Transform(new Vector4(playerSize / 2, playerRadius + playerSize, 0.9f, 1), rot); //top right
 
-                display.DrawSquare(c, d, a, b, ConsoleColor.Yellow);
+                display.DrawSquare(c, d, a, b, display.palette[2]);
 
 
                 display.DrawGameToConsole(score);

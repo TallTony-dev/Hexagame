@@ -44,6 +44,8 @@ namespace Hexagame
         }
 
 
+        public ConsoleColor[] palette = { ConsoleColor.Black, ConsoleColor.DarkMagenta, ConsoleColor.DarkBlue };
+
 
         (float strength, ConsoleColor color, float distFromCam)[,] values;
 
@@ -141,16 +143,38 @@ namespace Hexagame
             }
         }
 
+        float lastPaletteSwapTime = 0;
         public void Clear()
         {
             values = new (float strength, ConsoleColor color, float distFromCam)[values.GetLength(0), values.GetLength(1)];
+
+            if (elapsedTime -  lastPaletteSwapTime > 5)
+            {
+                lastPaletteSwapTime = elapsedTime;
+                Random rand = new Random();
+
+                palette[0] = (ConsoleColor)rand.Next(0, 15);
+                palette[1] = (ConsoleColor)rand.Next(0, 15);
+                while (palette[0] == ConsoleColor.Blue || palette[0] == ConsoleColor.Red || palette[0] == ConsoleColor.DarkBlue || palette[0] == ConsoleColor.DarkRed || palette[0] == ConsoleColor.DarkCyan || palette[0] == ConsoleColor.Cyan)
+                {
+                    palette[0] = (ConsoleColor)rand.Next(0, 15);
+                }
+                while (palette[1] == ConsoleColor.Blue || palette[1] == ConsoleColor.Red || palette[1] == ConsoleColor.DarkBlue || palette[1] == ConsoleColor.DarkRed || palette[1] == ConsoleColor.DarkCyan || palette[1] == ConsoleColor.Cyan)
+                {
+                    palette[1] = (ConsoleColor)rand.Next(0, 15);
+                }
+            }
+
+
             for (int x = 0; x < values.GetLength(0); x++)
             {
                 for (int y = 0; y < values.GetLength(1); y++)
                 {
-                    int ux = (int)(MathF.Sin((float)x / 4f) * MathF.Sin(elapsedTime / 2 + 2) * 4 + (elapsedTime * 4));
+                    int ux = x + (int)(MathF.Sin((float)x / 4f) * MathF.Sin(elapsedTime / 2 + 2) * 4 + (elapsedTime * 4)) + (int)(elapsedTime * 12);
                     int uy = y + (int)(elapsedTime * 4) /*+ (int)Math.Round(MathF.Sin(elapsedTime * 4))*/;
-                    values[x,y].color = ( (ux + uy) % 2) == 0 ? ConsoleColor.DarkBlue : ConsoleColor.DarkCyan;
+
+                    bool cond = ((ux) % 2) + (uy % 2) == 0;
+                    values[x,y].color = cond ? palette[0] : palette[1];
                 }
             }
 
