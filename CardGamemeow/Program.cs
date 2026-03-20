@@ -19,7 +19,7 @@ namespace CardGamemeow
             {
                 double deltaTime = ((double)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() / 1000) - prevTime;
 
-                if (deltaTime >= 0.09)
+                if (deltaTime >= 0.01)
                 {
                     prevTime += deltaTime;
 
